@@ -3,6 +3,8 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser';
 import { config } from 'dotenv';
 import morgan from 'morgan';
+import userRoutes from './routes/userRoutes.js';
+import errorMiddleware from './middlewares/error.middleware.js';
 
 config();
 
@@ -24,10 +26,14 @@ app.use('/ping', function(req,res){
     res.send('/pong');
 });
 
-//routes of 3 modules
+//Creating routes of 3 modules
+
+app.use('/api/v1/user', userRoutes)
 
 app.all('*', (req,res) => {
     res.status(404).send('OOPS!! 404 page is not found')
 });
+
+app.use(errorMiddleware);
 
 export default app;
