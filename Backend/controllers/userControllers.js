@@ -43,7 +43,8 @@ const register = async (req, res, next) =>{
 
     user.password = undefined;
 
-    const token = await user.generateJWTToken();
+    const token = await user.generateJWTToken;
+    
 
     res.cookie('token', token, cookieOptions)
 
@@ -78,8 +79,10 @@ const login = async(req, res, next) =>{
         if(!user || !user.comparePassword(password)){
             return next(new AppError('email or password not match',400))
         }
+
+       
     
-        const token = await user.generateJWTToken();
+        const token = await user.generateJWTToken;
     
         user.password = undefined;
     

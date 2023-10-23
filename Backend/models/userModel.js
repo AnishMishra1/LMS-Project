@@ -17,7 +17,7 @@ const userSchema = new Schema ({
         lowercase: true,
         trim: true,
         unique: true,
-        match: ["^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$", 'please provide valid email id']
+        // match: ["^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$, 'please provide valid email id']
     },
     password: {
         type: 'String',
@@ -55,21 +55,20 @@ userSchema.pre('save',async function(next) {
  
 });
 
-userSchema.method = {
-    generateJWTToken: async function() {
+userSchema.method.generateJWTToken = async function() {
         return await jwt.sign(
-            {id: this._id, email: this.email, subscription:this.subscription, role: this.role},
+            { id:this._id, email:this.email,subscription:this.subscription, role:this.role },
             process.env.JWT_SECRET,
             {
-                expiresIn: process.env.JWT_EXPIRY,
+                expiresIn: '24h',
             }
         )
-    },
-    comparePassword: async function(plainTextPassword) {
-        return await bcrypt.compare(plainTextPassword, this.password);
-
     }
+   
+userSchema.methods.comparePassword = async function(enteredPassword){
+    return await bcrypt.compare(enteredPassword,this.password);
 }
+
 
 const User = model('User', userSchema);
 
