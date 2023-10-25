@@ -17,15 +17,15 @@ const register = async (req, res, next) =>{
 
         const { fullName, email,password} = req.body;
 
-    // if(!fullName || !email || !password) {
-    //     return next(new AppError('All fields are required', 400));
-    // }
+    if(!fullName || !email || !password) {
+        return next(new AppError('All fields are required', 400));
+    }
 
-    // const userExists = await User.findOne({email});
+    const userExists = await User.findOne({email});
 
-    // if(userExists){
-    //     return next(new AppError('Email already exists',400))
-    // }
+    if(userExists){
+        return next(new AppError('Email already exists',400))
+    }
 
     const user = await User.create({
         fullName,
@@ -245,17 +245,19 @@ const resetPassword =  async() =>{
 }
 
 const changePassword = async(req,res, next) =>{
-    const {oldPassword, newPassword} = req.body;
+
+    try {
+        const {oldPassword, newPassword} = req.body;
     const {id} = req.user;
     
 
-    // if(!oldPassword || !newPassword) {
-    //     return next (
-    //         new AppError('all field are manadototy', 400)
-    //     )
-    // }
+    if(!oldPassword || !newPassword) {
+        return next (
+            new AppError('all field are manadototy', 400)
+        )
+    }
 
-    const user = await User.findById(id).select('+password');
+    const user = await User.findById(id).select("+password");
 
     if(!user){
         return next (new AppError('user does not exit', 400))
@@ -273,13 +275,21 @@ const changePassword = async(req,res, next) =>{
 
     
     sendToken(user, 200, res);
+        
+    } catch (error) {
+
+        return next(new AppError(error,400))
+        
+    }
+    
 
 }
 
 
 export {
     register,
-    login,logout,
+    login,
+    logout,
     getProfile,
     forgotPassword,
     resetPassword,
