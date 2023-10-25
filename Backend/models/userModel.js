@@ -5,7 +5,7 @@ import crypto from 'crypto'
 
 const userSchema = new Schema ({
     fullName:{
-        type: 'String',
+        type: String,
         required: [true, 'Name is required'],
         minLength: [5, 'Name must be least 5 charater'],
         maxLength: [ 50, 'Name must be less than 50 charater'],
@@ -13,7 +13,7 @@ const userSchema = new Schema ({
         trim:true, 
     },
     email: {
-        type: 'String',
+        type: String,
         required: [true,'Email is required'],
         lowercase: true,
         trim: true,
@@ -21,21 +21,21 @@ const userSchema = new Schema ({
         // match: ["^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$, 'please provide valid email id']
     },
     password: {
-        type: 'String',
+        type: String,
         required: [ true, 'password is required'],
         minLength:[6, 'Must be min 6 charater is require in password'],
         select: false,
     },
     avatar: {
         public_id:{
-            type: 'String',
+            type: String,
         },
         secure_url:{
-            type:'String'
+            type:String
         }
     },
     role:{
-        type:'String',
+        type:String,
         enum:['USER','ADMIN'],
         default:'USER'
 
@@ -61,7 +61,7 @@ userSchema.pre("save",async function(next){
 
 userSchema.methods.generateJWTToken =  function() {
         return  jwt.sign(
-            { id:this._id, email:this.email,subscription:this.subscription, role:this.role },
+            { id:this._id, email:this.email, role:this.role },
             process.env.JWT_SECRET,
             {
                 expiresIn: process.env.JWT_EXPIRY
@@ -74,14 +74,14 @@ userSchema.methods.comparePassword = async function(enteredPassword){
 }
 
 
-userSchema.method.generatePasswordResetToken = function(){
+userSchema.methods.generatePasswordResetToken = function(){
     const resetToken = crypto.randomBytes(20).toString("hex");
 
     this.forgotPasswordToken = crypto
                .createHash("sha256")
               .update(resetToken)
               .digest("hex");
-    this.forgotPasswordExpiry = Date.now()+ 15*60*1000; // 15 min from now
+    this.forgotPasswordExpiry = Date.now()+ 15 * 60 * 1000; // 15 min from now
 
     return resetToken;
 }

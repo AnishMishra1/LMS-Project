@@ -9,7 +9,7 @@ const isLoggedIn = async(req, res, next) => {
         return next (new AppError('please login first',401))
     }
 
-    const userDetails = await jwt.verify(token, process.env.JWT_SECRET)
+    const userDetails = jwt.verify(token, process.env.JWT_SECRET)
 
     req.user = userDetails;
 

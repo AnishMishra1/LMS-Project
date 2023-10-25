@@ -3,6 +3,7 @@ import User from "../models/userModel.js"
 import cloudinary from 'cloudinary'
 import sendEmail from '../utils/sendEmail.js'
 import crypto from "crypto"
+import sendToken from "../utils/sendToken.js";
 
 const cookieOptions = {
     maxAge: 7*24*60*60*1000,// 7days
@@ -254,7 +255,7 @@ const changePassword = async(req,res, next) =>{
     //     )
     // }
 
-    const user = await User.findById(id).select("+password");
+    const user = await User.findById(id).select('+password');
 
     if(!user){
         return next (new AppError('user does not exit', 400))
@@ -270,11 +271,8 @@ const changePassword = async(req,res, next) =>{
     user.password = newPassword;
     await user.save();
 
-    user.password = undefined
-    res.status(200).json({
-        success:true,
-        message: 'password changed succefully'
-    })
+    
+    sendToken(user, 200, res);
 
 }
 
