@@ -1,5 +1,8 @@
 import AppError from "../utils/error.utils.js";
 import User from "../models/userModel.js"
+import cloudinary from 'cloudinary'
+import sendEmail from '../utils/sendEmail.js'
+import crypto from "crypto"
 
 const cookieOptions = {
     maxAge: 7*24*60*60*1000,// 7days
@@ -13,15 +16,15 @@ const register = async (req, res, next) =>{
 
         const { fullName, email,password} = req.body;
 
-    if(!fullName || !email || !password) {
-        return next(new AppError('All fields are required', 400));
-    }
+    // if(!fullName || !email || !password) {
+    //     return next(new AppError('All fields are required', 400));
+    // }
 
-    const userExists = await User.findOne({email});
+    // const userExists = await User.findOne({email});
 
-    if(userExists){
-        return next(new AppError('Email already exists',400))
-    }
+    // if(userExists){
+    //     return next(new AppError('Email already exists',400))
+    // }
 
     const user = await User.create({
         fullName,
@@ -29,6 +32,7 @@ const register = async (req, res, next) =>{
         password,
         avatar:{
             public_id: email,
+            secure_url:'ghghghjghgjhgj'
             
         }
     })
@@ -38,6 +42,34 @@ const register = async (req, res, next) =>{
     }
 
     //TODO: File upload
+
+    // if(req.file) {
+    //     try {
+    //         const result =  await cloudinary.v2.uploader.upload(req.file.path, {
+    //             folder: 'LMS',
+    //             width: 250,
+    //             height: 250,
+    //             gravity: 'face',
+    //             crop: fill
+    //         });
+    //         if(result){
+    //             user.avatar.public_id = result.public_id;
+    //             user.avatar.secure_url = result.secure_url;
+
+    //             //remove file from server
+    //             Fs.rm(`uploads/${req.file.filename}`)
+
+    //         }
+    //     } catch (error) {
+
+    //         return next(
+    //             new AppError(error || 'file not uploaded',500)
+    //         )
+            
+    //     }
+    // }
+
+
 
     await user.save();
 
@@ -82,7 +114,7 @@ const login = async(req, res, next) =>{
 
        
     
-        const token = await user.generateJWTToken;
+        const token = await user.generateJWTToken();
     
         user.password = undefined;
     
@@ -122,7 +154,7 @@ const logout = (req, res) =>{
 
 const getProfile = async (req, res) =>{
     try {
-        const userId = req.body.id
+        const userId = req.user.id
         const user = await User.findById(userId) ;
 
         res.status(200).json({
@@ -137,9 +169,121 @@ const getProfile = async (req, res) =>{
     
 };
 
+const forgotPassword = async(req,res, next) =>{
+
+    const {email} = req.body
+    console.log('your mail is ', email);
+
+    if(!email){
+        return next(new AppError('email is required', 400))
+    }
+
+    const user = await User.findOne({email});
+
+    if(!user){
+        return next(new AppError('email is not registered', 400))
+    }
+
+    const resetToken = await user.generatePasswordResetToken;
+
+    await user.save();
+
+    const resetPasswordURL = `${process.env.FRONTEND_URL}/forgot-password/${resetToken}`
+
+    const subject = 'reset password'
+
+    const message =`you can reset your password ${resetPasswordURL}`
+
+    try {
+        await sendEmail(email, subject, message);
+
+        res.status(200).json({
+            success:true,
+            message: `reset password token sent to mail id ${email} succesfully`
+        })
+    } catch (error) {
+        user.forgotPasswordExpiry = undefined;
+        user.forgotPasswordToken = undefined;
+
+        await user.save();
+        return next(new AppError(error.message,500))
+        
+    }
+
+}
+
+const resetPassword =  async() =>{
+    const { resetToken } = req.params;
+
+    const { password } = req.body;
+
+    const forgotPasswordToken = crypto.
+                                     createHash('sha256')
+                                     .update(resetToken)
+                                     .digest('hex');
+
+    const user = await User.findOne ({
+        forgotPasswordToken,
+        forgotPasswordExpiry: {$gt : Date.now()}
+    })  
+    
+    if(!user){
+        return next(new AppError('Token is invalid or expired, try again',400))
+    }
+
+    user.password = password;
+    user.forgotPasswordExpiry = undefined
+    user.forgotPasswordToken = undefined
+
+    user.save();
+    res.status(200).json({
+        success:true,
+        message: 'password changed succefully'
+    })
+
+}
+
+const changePassword = async(req,res, next) =>{
+    const {oldPassword, newPassword} = req.body;
+    const {id} = req.user;
+    
+
+    // if(!oldPassword || !newPassword) {
+    //     return next (
+    //         new AppError('all field are manadototy', 400)
+    //     )
+    // }
+
+    const user = await User.findById(id).select("+password");
+
+    if(!user){
+        return next (new AppError('user does not exit', 400))
+    }
+   
+
+    const isPasswordValid = await user.comparePassword(oldPassword);
+
+    if(!isPasswordValid){
+        return next(new AppError('invalid old password',400))
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    user.password = undefined
+    res.status(200).json({
+        success:true,
+        message: 'password changed succefully'
+    })
+
+}
+
 
 export {
     register,
     login,logout,
-    getProfile
-}
+    getProfile,
+    forgotPassword,
+    resetPassword,
+    changePassword
+}   

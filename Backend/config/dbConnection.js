@@ -15,8 +15,8 @@ const connectionToDB = async () => {
             
         } 
         
-    } catch (e) {
-        console.log(e);
+    } catch (error) {
+        console.log(error);
         process.exit(1);
         
     }
@@ -24,4 +24,4 @@ const connectionToDB = async () => {
     
 }
 
-export default connectionToDB;
+export default connectionToDB
