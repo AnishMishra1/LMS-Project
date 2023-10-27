@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import { config } from 'dotenv';
 import morgan from 'morgan';
 import userRoutes from './routes/userRoutes.js';
+import courseRoutes from './routes/courseRouter.js'
 import errorMiddleware from './middlewares/error.middleware.js';
 
 config();
@@ -32,6 +33,8 @@ app.use('/ping', function(req,res){
 //Creating routes of 3 modules
 
 app.use('/api/v1/user', userRoutes)
+app.use('/api/v1/courses', courseRoutes)
+
 
 app.all('*', (req,res) => {
     res.status(404).send('OOPS!! 404 page is not found')

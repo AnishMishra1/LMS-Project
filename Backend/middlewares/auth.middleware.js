@@ -18,4 +18,13 @@ const isLoggedIn = async(req, res, next) => {
 
 }
 
-export {isLoggedIn}
+const authorizedRoles =  function(req,res,next){
+    if(req.user.role !== 'ADMIN'){
+        return next (new AppError("you are not authorized person",403))
+    }
+
+    next();
+
+}
+
+export {isLoggedIn, authorizedRoles}
