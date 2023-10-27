@@ -185,15 +185,18 @@ const forgotPassword = async(req,res, next) =>{
         return next(new AppError('email is not registered', 400))
     }
 
-    const resetToken = await user.generatePasswordResetToken;
+    const resetToken = await user.generatePasswordResetToken();
 
     await user.save();
 
-    const resetPasswordURL = `${process.env.FRONTEND_URL}/forgot-password/${resetToken}`
+    const resetPasswordURL = `${process.env.FRONTEND_URL}/forgot-password/${resetToken}`;
+
+    console.log(resetPasswordURL);
 
     const subject = 'reset password'
 
     const message =`you can reset your password ${resetPasswordURL}`
+   
 
     try {
         await sendEmail(email, subject, message);
@@ -213,7 +216,7 @@ const forgotPassword = async(req,res, next) =>{
 
 }
 
-const resetPassword =  async() =>{
+const resetPassword =  async(req, res) =>{
     const { resetToken } = req.params;
 
     const { password } = req.body;
