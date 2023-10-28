@@ -27,4 +27,12 @@ const authorizedRoles =  function(req,res,next){
 
 }
 
-export {isLoggedIn, authorizedRoles}
+const authorizeSubscriber = async function(req,res, next){
+  if(req.user.subscription.status !== 'active' || req.user.role !== 'ADMIN'){
+    return next (new AppError("please subscribe the route",403))
+  }
+
+  next()
+}
+
+export {isLoggedIn, authorizedRoles, authorizeSubscriber}

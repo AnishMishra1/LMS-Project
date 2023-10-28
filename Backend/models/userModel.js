@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose";
 import  bcrypt from 'bcryptjs';
 import jwt from "jsonwebtoken";
 import crypto from 'crypto'
+import { stringify } from "querystring";
 
 const userSchema = new Schema ({
     fullName:{
@@ -41,7 +42,11 @@ const userSchema = new Schema ({
 
     },
     forgotPasswordToken: String,
-    forgotPasswordExpiry: Date
+    forgotPasswordExpiry: Date,
+    subscription: {
+        id: String,
+        status: String
+    }
     
     
 },{
@@ -61,7 +66,7 @@ userSchema.pre("save",async function(next){
 
 userSchema.methods.generateJWTToken =  function() {
         return  jwt.sign(
-            { id:this._id, email:this.email, role:this.role },
+            { id:this._id, email:this.email, role:this.role, subscription:this.subscription },
             process.env.JWT_SECRET,
             {
                 expiresIn: process.env.JWT_EXPIRY
