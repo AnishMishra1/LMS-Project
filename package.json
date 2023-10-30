@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+  },
+  "dependencies": {
+    "react-hook-form": "^7.47.0"
+  }
+}
