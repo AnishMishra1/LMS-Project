@@ -1,16 +1,18 @@
-import { useState } from 'react'
+
 import './App.css'
 import { Routes } from 'react-router-dom'
+import Footer from './Components/Footer'
 
 function App() {
 
 
   return (
     <>
-    hello
-      <Routes>
+    
+      {/* <Routes> */}
         {/* <Route path ='/' element = {<Home />}></Route> */}
-      </Routes>
+      {/* </Routes> */}
+      <Footer/>
     </>
   )
 }
