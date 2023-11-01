@@ -56,7 +56,7 @@ const HomeLayout = ({children}) => {
               </div>
               <div className="drawer-side">
                   <label htmlFor="my-drawer"  className="drawer-overlay"></label>
-                  <ul className="menu p-4 w-48 sm:w-80 bg-base-300 text-base-content relative">
+                  <ul className="menu p-4 w-48 h-[100%] sm:w-80 bg-base-300 text-base-content relative">
                        {/* Sidebar content here */}
                        <li className='w-fit absolute right-2 z-50'>
                            <button onClick={hideDrawer}>
@@ -86,7 +86,7 @@ const HomeLayout = ({children}) => {
                         <li className='absolute bottom-4 w-[90%]'>
                         
                          {!isLoggedIn && (
-                            <div className='w-full flex items-center justify-center'>
+                            <div className='w-full bottom-4 flex items-center justify-center'>
                                 <button className='btn-primary px-4 font-semibold rounded-md w-full'>
                                  <Link to='/login'>Login</Link>
                                 </button>
@@ -98,7 +98,7 @@ const HomeLayout = ({children}) => {
 
 
                              {isLoggedIn && (
-                            <div className='w-full flex items-center justify-center'>
+                            <div className='w-full bottom-4 flex items-center justify-center'>
                                 <button className='btn-primary px-4 font-semibold rounded-md w-full'>
                                  <Link to='/me'>Profile</Link>
                                 </button>
