@@ -69,7 +69,7 @@ const Signup = () => {
         // formData.append('fullName', signupData.fullName);
         // formData.append('password', signupData.password);
         // formData.append('email', signupData.email);
-        // formData.append('avatar', signupData.avatar);
+        // formData.append('avatar', signupData.avatar);......
 
         //dispatch create account action
 

@@ -4,14 +4,14 @@ import { BsPersonCircle } from 'react-icons/bs';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import {toast} from 'react-hot-toast'
-import { createAccount } from '../Redux/Slices/Authslice';
+import {  login } from '../Redux/Slices/Authslice';
 
 const Login = () => {
 
     const dispatch = useDispatch()
     const navigate = useNavigate();
 
-    const [signupData , setSignupData] = useState({
+    const [loginData , setLoginData] = useState({
         
         email:"",
         password: "",
@@ -19,18 +19,18 @@ const Login = () => {
 
     function handleUserInput(e){
         const {name , value} = e.target;
-        setSignupData({
-            ...signupData,
+        setLoginData({
+            ...loginData,
             [name]: value
         })
     }
 
     
 
-     async function  createNewAccount(e){
+     async function  onLogin(e){
          e.preventDefault();
 
-        if(!signupData.email || !signupData.password || !signupData.fullName){
+        if(!loginData.email || !loginData.password ){
             toast.error('please fill all the details');
             return;
         }
@@ -42,7 +42,7 @@ const Login = () => {
 
         //dispatch create account action
 
-        const response = await dispatch(createAccount())
+        const response = await dispatch(login(loginData))
         console.log(response);
 
     
@@ -50,8 +50,8 @@ const Login = () => {
 
         navigate('/');
 
-        setSignupData({
-            fullName: '',
+        setLoginData({
+            
             email:"",
             password: "",
 
@@ -64,7 +64,7 @@ const Login = () => {
   return (
     <HomeLayout>
         <div className='flex overflow-x-auto items-center justify-center  bg-cyan-800 h-[100vh]'>
-        <form noValidate onSubmit={createNewAccount} className='flex flex-col justify-center gap-3  p-10 border rounded-lg text-white '>
+        <form noValidate onSubmit={onLogin} className='flex flex-col justify-center gap-3  p-10 border rounded-lg text-white '>
             <h1 className='text-center text-2xl font-bold'>Login Page</h1>
 
            
@@ -80,7 +80,7 @@ const Login = () => {
                 id='email'
                 placeholder='Enter your email...'
                 className='bg-transparent px-6 py-1 border'
-                value={signupData.email}
+                value={loginData.email}
                 onChange={handleUserInput}
 
                 />
@@ -94,7 +94,7 @@ const Login = () => {
                 id='password'
                 placeholder='Enter your password...'
                 className='bg-transparent px-6 py-1 border'
-                value={signupData.password}
+                value={loginData.password}
                 onChange={handleUserInput}
 
                 />  
