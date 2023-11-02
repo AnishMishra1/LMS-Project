@@ -91,7 +91,7 @@ const HomeLayout = ({children}) => {
                                  <Link to='/login'>Login</Link>
                                 </button>
                                 <button className='btn-secondary px-4 font-semibold rounded-md w-full'>
-                                 <Link to='/register'>SignUp</Link>
+                                 <Link to='/signup'>SignUp</Link>
                                 </button>
                             </div>
                                  ) }
