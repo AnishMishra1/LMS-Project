@@ -6,6 +6,7 @@ import Homepage from './Pages/Homepage'
 import AboutUs from './Pages/AboutUs'
 import Signup from './Pages/Signup'
 import Login from './Pages/Login'
+import CourseList from './Pages/Course/CourseList'
 
 function App() {
 
@@ -21,6 +22,9 @@ function App() {
         {/* Creating Signup route */}
         <Route path ='/signup' element = {<Signup />}></Route>
         <Route path ='/login' element = {<Login />}></Route>
+
+        <Route path ='/courses' element = {<CourseList />}></Route>
+
 
 
 
