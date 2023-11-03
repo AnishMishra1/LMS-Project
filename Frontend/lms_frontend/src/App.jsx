@@ -7,6 +7,7 @@ import AboutUs from './Pages/AboutUs'
 import Signup from './Pages/Signup'
 import Login from './Pages/Login'
 import CourseList from './Pages/Course/CourseList'
+import Contact from './Pages/Contact'
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
         <Route path ='/login' element = {<Login />}></Route>
 
         <Route path ='/courses' element = {<CourseList />}></Route>
+        <Route path ='/contact' element = {<Contact />}></Route>
 
 
 
