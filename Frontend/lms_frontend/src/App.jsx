@@ -8,6 +8,7 @@ import Signup from './Pages/Signup'
 import Login from './Pages/Login'
 import CourseList from './Pages/Course/CourseList'
 import Contact from './Pages/Contact'
+import CourseDescription from './Pages/Course/CourseDescription'
 
 function App() {
 
@@ -25,7 +26,10 @@ function App() {
         <Route path ='/login' element = {<Login />}></Route>
 
         <Route path ='/courses' element = {<CourseList />}></Route>
+        <Route path ='/course/description' element = {<CourseDescription />}></Route>
         <Route path ='/contact' element = {<Contact />}></Route>
+
+        '/course/description'
 
 
 
