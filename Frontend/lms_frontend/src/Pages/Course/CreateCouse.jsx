@@ -25,9 +25,11 @@ const CreateCouse = () => {
 
   function handleUserInput(e){
      const {name , value} = e.target;
+     
      setUserInput({
       ...userInput,
-      [name] : value
+      [name] : value,
+      
      })
    
   }
