@@ -13,6 +13,7 @@ import RequireAuth from './Components/Auth/RequireAuth'
 import CreateCouse from './Pages/Course/CreateCouse'
 import Denied from './Pages/Denied'
 import Profile from './Pages/Profile'
+import EditProfile from './Pages/EditProfile'
 
 function App() {
 
@@ -40,7 +41,10 @@ function App() {
 
         <Route element={<RequireAuth allowedRoles={['ADMIN', 'USER']}/>}>
         <Route path ='/user/profile' element = {<Profile />}></Route> 
+        <Route path ='/user/editprofile' element = {<EditProfile />}></Route> 
         </Route>
+
+        
 
         
 

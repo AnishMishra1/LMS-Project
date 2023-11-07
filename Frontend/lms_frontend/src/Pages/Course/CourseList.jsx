@@ -7,10 +7,12 @@ import CourseCard from '../../Components/CourseCard';
 const CourseList = () => {
 
     const dispatch = useDispatch()
-    const {courseData} = useSelector((state) => state.course);
+    const {courseData} = useSelector(state => state?.course);
+    console.log(courseData)
 
     async function loadCourses(){
-        await dispatch(getAllCourses)
+        await dispatch(getAllCourses())
+       
 
     }
 
@@ -33,6 +35,7 @@ const CourseList = () => {
                     return <CourseCard 
                     key={element.id}
                     data= {element}
+                    
                     />
                 })}
 

@@ -6,7 +6,8 @@ import
          getProfile ,
          forgotPassword,
          resetPassword ,
-         changePassword
+         changePassword,
+         updateUser
         } 
         from "../controllers/userControllers.js";
         
@@ -22,7 +23,9 @@ router.post('/logout', logout)
 router.get('/me',isLoggedIn, getProfile)
 router.post('/forgot-password', forgotPassword)
 router.post('/reset-password/:resetToken', resetPassword)
-router.put('/change-password', isLoggedIn, changePassword)
+router.put('/change-password', isLoggedIn, changePassword);
+router.put('/update/:id', isLoggedIn,updateUser)
+
 
 
 

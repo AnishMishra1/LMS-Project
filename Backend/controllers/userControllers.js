@@ -288,6 +288,33 @@ const changePassword = async(req,res, next) =>{
 
 }
 
+const updateUser = async (req,res,next) =>{ 
+
+        const { fullName } = req.body;
+        const { id } = req.params;
+    
+        const user = await User.findById(id);
+    
+        if(!user){
+            return next(new AppError('Invalid user id or User Not found'))
+        }
+    
+        if(fullName){
+            user.fullName = fullName
+        }
+
+
+  
+
+    await user.save();
+
+    res.status(200).json({
+        success:true,
+        message: 'User details updated successfully'
+    })
+
+}
+
 
 export {
     register,
@@ -296,5 +323,6 @@ export {
     getProfile,
     forgotPassword,
     resetPassword,
-    changePassword
+    changePassword,
+    updateUser
 }   
