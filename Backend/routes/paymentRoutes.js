@@ -26,7 +26,7 @@ router
      .post(isLoggedIn,cancelSubscription)  
      
 router
-     .route('/')
+     .route('/records')
      .get(isLoggedIn,authorizedRoles,allPayments)    
      
      

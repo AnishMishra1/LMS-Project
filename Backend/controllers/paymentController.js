@@ -68,7 +68,7 @@ const verifySubscription = async function(req,res,next){
             return next(new AppError('Unauthorized, Please login',400))
         }
     
-       const subscriptionId = user.subscription.id;
+       const subscriptionId = User.subscription.id;
     
        const generatedSignature = crypto
                                        .createHmac('sha256',process.env.RAZORPAY_SECRET)
@@ -132,16 +132,40 @@ const cancelSubscription = async function(req,res,next){
 const allPayments = async function(req,res,next){
 
     try {
-        const {count} = req.query;
+        const {count, skip} = req.query;
     
         const payments = await razorpay.subscriptions.all({
             count: count || 10,
         })
-    
+
+        const monthNames = [
+            'january',
+            'feburary',
+            'march',
+            'april',
+            'may',
+            'jun',
+            'july',
+            'August',
+            'sept',
+            'october',
+            'november',
+            'december'
+        ]
+
+        const finalMonth = {
+            jan:0,
+            feb:0,
+            march:0,
+            april:0,
+
+        }
+
+        
         res.status(200).json({
             success:true,
             message: 'All payments',
-            subscriptions
+            payments
         })
     } catch (e) {
 
