@@ -54,7 +54,7 @@ const Checkout = () => {
                 res?.payload?.success ? navigate('/checkout/success'): navigate('/checkout/fail')
                 
                
-            }
+         }
             // ...................................
 
         }

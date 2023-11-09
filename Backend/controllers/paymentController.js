@@ -84,7 +84,7 @@ const verifySubscription = async function(req,res,next){
         .update(`${razorpay_payment_id}|${subscriptionId}`)
         .digest('hex');
 
-        // ..............................
+        
     
     
         if (generatedSignature !== razorpay_signature) {
