@@ -83,6 +83,8 @@ const verifySubscription = async function(req,res,next){
         .createHmac('sha256', process.env.RAZORPAY_SECRET)
         .update(`${razorpay_payment_id}|${subscriptionId}`)
         .digest('hex');
+
+        // ..............................
     
     
         if (generatedSignature !== razorpay_signature) {
