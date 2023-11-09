@@ -6,9 +6,10 @@ import crypto from "crypto"
 import sendToken from "../utils/sendToken.js";
 
 const cookieOptions = {
+    secure: process.env.NODE_ENV === 'production' ? true : false,
     maxAge: 7*24*60*60*1000,// 7days
     httpOnly: true,
-    secure: true
+   
 }
 
 const register = async (req, res, next) =>{
@@ -125,6 +126,7 @@ const login = async(req, res, next) =>{
             success:true,
             message:'login succesfully',
             user,
+            token
         })
     
         

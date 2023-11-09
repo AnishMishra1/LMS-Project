@@ -14,6 +14,8 @@ import CreateCouse from './Pages/Course/CreateCouse'
 import Denied from './Pages/Denied'
 import Profile from './Pages/Profile'
 import EditProfile from './Pages/EditProfile'
+import Checkout from './Pages/payments/Checkout'
+import CheckoutSuccess from './Pages/payments/CheckoutSuccess'
 
 function App() {
 
@@ -42,6 +44,8 @@ function App() {
         <Route element={<RequireAuth allowedRoles={['ADMIN', 'USER']}/>}>
         <Route path ='/user/profile' element = {<Profile />}></Route> 
         <Route path ='/user/editprofile' element = {<EditProfile />}></Route> 
+        <Route path ='/checkout' element = {<Checkout />}></Route> 
+        <Route path='/checkout/success' element={<CheckoutSuccess />} />
         </Route>
 
         

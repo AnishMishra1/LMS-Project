@@ -1,7 +1,9 @@
+import crypto from 'crypto';
 import Payment from "../models/paymentModel.js";
 import User from "../models/userModel.js";
 import { razorpay } from "../server.js";
 import AppError from "../utils/error.utils.js";
+
 
 const getRazorpayApiKey = async function(req,res,next){
 
@@ -22,8 +24,9 @@ const getRazorpayApiKey = async function(req,res,next){
 
 const buySubscription = async function(req,res,next){
     try {
-        const {id} = req.user
-        const user = await User.findById(id);
+        
+        
+        const user = await User.findById(req.user.id);
     
         if(!user){
             return next(new AppError('Unauthorized, Please login',400))
@@ -34,9 +37,12 @@ const buySubscription = async function(req,res,next){
         }
     
         const subscription = await razorpay.subscriptions.create({
-            plan_id:process.env.RAZORPAY_PLAIN_ID,
-            customer_notify:1
+            plan_id:process.env.RAZORPAY_PLAN_ID || "plan_MxtAtZzt3V2dKB",
+            customer_notify:1,
+            total_count:1
         });
+
+        
     
     
         user.subscription.id = subscription.id;
@@ -58,45 +64,48 @@ const buySubscription = async function(req,res,next){
 }
 
 const verifySubscription = async function(req,res,next){
-    try {
-        const {id}= req.user;
-        const {razorpay_payment_id, razorpay_signature, razorpay_subscription_id} = req.body;
     
+        const { id } = req.user;
         const user = await User.findById(id);
-    
         if(!user){
             return next(new AppError('Unauthorized, Please login',400))
         }
+        const { razorpay_payment_id, razorpay_subscription_id, razorpay_signature } =
+          req.body;
     
-       const subscriptionId = User.subscription.id;
+          
     
-       const generatedSignature = crypto
-                                       .createHmac('sha256',process.env.RAZORPAY_SECRET)
-                                       .update(`${razorpay_payment_id} | ${subscriptionId}`)
-                                       .digest('hex');
-    
-    
-       if(generatedSignature !== razorpay_signature){
-         return next(new AppError('payment is not verfied',500));
-       }      
-       
-       await Payment.create({
-        razorpay_payment_id,
-        razorpay_subscription_id,
-        razorpay_signature
-       });
-    
-       user.subscription.status = 'active';
-       await user.save();
-    
-       res.status(200).json({
-        success: true,
-        message:'payment verified succesfully done'
-       })
-    } catch (e) {
-        return next(new AppError(e.message,400))
         
-    }
+    
+        const subscriptionId = user.subscription.id;
+    
+        const generatedSignature = crypto
+        .createHmac('sha256', process.env.RAZORPAY_SECRET)
+        .update(`${razorpay_payment_id}|${subscriptionId}`)
+        .digest('hex');
+    
+    
+        if (generatedSignature !== razorpay_signature) {
+            return next(new AppError('Payment not verified, please try again.', 400));
+          }   
+       
+          await Payment.create({
+            razorpay_payment_id,
+            razorpay_subscription_id,
+            razorpay_signature,
+          });
+    
+         // Update the user subscription status to active (This will be created before this)
+         user.subscription.status = 'active';
+
+        // Save the user in the DB with any changes
+         await user.save();
+    
+         res.status(200).json({
+            success: true,
+            message: 'Payment verified successfully',
+          });
+    
 
     
 }
@@ -137,29 +146,6 @@ const allPayments = async function(req,res,next){
         const payments = await razorpay.subscriptions.all({
             count: count || 10,
         })
-
-        const monthNames = [
-            'january',
-            'feburary',
-            'march',
-            'april',
-            'may',
-            'jun',
-            'july',
-            'August',
-            'sept',
-            'october',
-            'november',
-            'december'
-        ]
-
-        const finalMonth = {
-            jan:0,
-            feb:0,
-            march:0,
-            april:0,
-
-        }
 
         
         res.status(200).json({

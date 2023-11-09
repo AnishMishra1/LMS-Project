@@ -64,8 +64,8 @@ userSchema.pre("save",async function(next){
 });
 
 
-userSchema.methods.generateJWTToken =  function() {
-        return  jwt.sign(
+userSchema.methods.generateJWTToken = async function() {
+        return  await jwt.sign(
             { id:this._id, email:this.email, role:this.role, subscription:this.subscription },
             process.env.JWT_SECRET,
             {

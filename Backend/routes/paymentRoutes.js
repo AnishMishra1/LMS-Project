@@ -14,7 +14,7 @@ router
       .get(isLoggedIn,getRazorpayApiKey)
 
 router
-     .route('/subscription')
+     .route('/subscribe')
      .post(isLoggedIn,buySubscription)
      
 router

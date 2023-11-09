@@ -8,7 +8,7 @@ const store = configureStore({
     reducer: {
         auth: authSliceReducer,
         course: CourseSliceReducer,
-        payment: RazorpaySliceReducer
+        razorpay: RazorpaySliceReducer
     },
     devTools:true
 });

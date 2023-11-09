@@ -5,10 +5,10 @@ import toast from 'react-hot-toast';
 const initialState = {
     key: '',
     subscription_id: '',
-    isPaymentVerified : '',
+    isPaymentVerified : false,
     allPayments: '',
-    // finalMonths: '',
-    // monthlySalesRecord: []
+    finalMonths: '',
+    monthlySalesRecord: []
 }
 
 
@@ -23,23 +23,24 @@ export const getRazorpayId = createAsyncThunk("razorpay/getId", async () => {
 
 
 
-export const purchaseCourseBundle = createAsyncThunk("/purchaseCourse", async () =>{
+export const purchaseCourseBundle = createAsyncThunk("razorpay/purchaseCourse", async () =>{
     try {
         const response = await axiosInstance.post("/payments/subscribe");
+        console.log("here....",response);
         return response.data
     } catch (error) {
         toast.error(error?.response?.data?.message)
     }
 })
 
-export const verifyUserPayment = createAsyncThunk("/payments/verify", async () =>{
+export const verifyUserPayment = createAsyncThunk("/payments/verify", async (data) =>{
     try {
         const response = await axiosInstance.post("/payments/verify",{
             razorpay_payment_id : data.razorpay_payment_id,
             razorpay_subscription_id: data.razorpay_subscription_id,
             razorpay_signature : data.razorpay_signature
         });
-        return response.data
+        return ( await response).data
     } catch (error) {
         toast.error(error?.response?.data?.message)
     }
@@ -47,8 +48,8 @@ export const verifyUserPayment = createAsyncThunk("/payments/verify", async () =
 
 export const getPaymentRecord = createAsyncThunk("/payments/records", async () =>{
     try {
-        const response = await axiosInstance.post("/payments/records");
-        toast.promise(res, {
+        const response = await axiosInstance.get("/payments/records");
+        toast.promise(response, {
             loading:"waiting....",
             success: (data) => {
                 return data?.data?.message
@@ -57,7 +58,7 @@ export const getPaymentRecord = createAsyncThunk("/payments/records", async () =
         })
         return (await response).data
     } catch (error) {
-        toast.error(error?.response?.data?.message)
+        toast.error('operation failed')
     }
 })
 
@@ -89,17 +90,19 @@ const razorpaySlice = createSlice({
         state.subscription_id = action?.payload?.subscription_id;
     })
     .addCase(verifyUserPayment.fulfilled, (state,action) => {
+        console.log("lllll",action.payload);
         toast.success(action?.payload?.message),
         state.isPaymentVerified = action?.payload?.success
     })
     .addCase(verifyUserPayment.rejected, (state,action) => {
+       
         toast.success(action?.payload?.message),
         state.isPaymentVerified = action?.payload?.success
     })
-    .addCase(getPaymentRecord, (state,action) => {
+    .addCase(getPaymentRecord.fulfilled, (state,action) => {
         state.allPayments = action?.payload?.payments;
-        // state.finalMonths = action?.payload?.finalMonths;
-        // state.monthlySalesRecord= action?.payload?.monthlySalesRecord;
+        state.finalMonths = action?.payload?.finalMonths;
+        state.monthlySalesRecord= action?.payload?.monthlySalesRecord;
     })
 
   }
