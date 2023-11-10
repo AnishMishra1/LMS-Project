@@ -23,7 +23,7 @@ router
      
 router
      .route('/unsubscribe')
-     .post(isLoggedIn,cancelSubscription)  
+     .post(isLoggedIn,authorizeSubscriber,cancelSubscription)  
      
 router
      .route('/records')
