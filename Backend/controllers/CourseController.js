@@ -60,8 +60,23 @@ const createCourse = async function(req,res,next) {
     })
 
     if(!course){
-        return next (new AppError('plz try again',400))
+        return next (new AppError('plz try again',500))
     }
+
+    if (req.file) {
+        const result = await cloudinary.v2.uploader.upload(req.file.path, {
+          folder: "lms",
+        });
+    
+        if (result) {
+          course.thumbnail.public_id = result.public_id;
+          course.thumbnail.secure_url = result.secure_url;
+        } else {
+          return next(new AppError(error.message, 400));
+        }
+    
+        fs.rm(`uploads/${req.file.filename}`);
+      }
 
     await course.save();
 
@@ -156,7 +171,13 @@ const addLectureToCourseById = async function(req,res,next){
 
     const {id} = req.params;
 
+    if (!title || !description) {
+        return next(new AppError("please provide title and descriptioon", 400));
+      }
+
     const course = await Course.findById(id);
+
+
 
     if(!course){
         return next (new AppError('course with given id doesnot exist',500))
@@ -165,8 +186,30 @@ const addLectureToCourseById = async function(req,res,next){
     const lectureData = {
         title,
         description,
-        lecture: {}
+        lecture: {
+            public_id: "dummy",
+            secure_url: "dummy",
+          },
     }
+
+    if (req.file) {
+        try {
+          const result = await cloudinary.v2.uploader.upload(req.file.path, {
+            folder: "lms",
+          });
+    
+          if (result) {
+            lectureData.lecture.public_id = result.public_id;
+            lectureData.lecture.secure_url = result.secure_url;
+          } else {
+            return next(new AppError(error.message, 400));
+          }
+    
+          fs.rm(`uploads/${req.file.filename}`);
+        } catch (error) {
+          return next(new AppError(error.message,400))
+        }
+      }
 
     course.lectures.push(lectureData);
 

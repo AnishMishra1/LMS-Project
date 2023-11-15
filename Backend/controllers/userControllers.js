@@ -4,6 +4,7 @@ import cloudinary from 'cloudinary'
 import sendEmail from '../utils/sendEmail.js'
 import crypto from "crypto"
 import sendToken from "../utils/sendToken.js";
+import fs from 'fs/promises';
 
 const cookieOptions = {
     secure: process.env.NODE_ENV === 'production' ? true : false,
@@ -34,42 +35,51 @@ const register = async (req, res, next) =>{
         password,
         avatar:{
             public_id: email,
-            secure_url:'ghghghjghgjhgj'
+            secure_url:
+            'https://res.cloudinary.com/du9jzqlpt/image/upload/v1674647316/avatar_drzgxv.jpg',
+
             
-        }
+        },
     })
 
     if(!user) {
         return next(new AppError('user registration failed plz try again', 400))
     }
 
-    //TODO: File upload
+    // TODO: File upload
 
-    // if(req.file) {
-    //     try {
-    //         const result =  await cloudinary.v2.uploader.upload(req.file.path, {
-    //             folder: 'LMS',
-    //             width: 250,
-    //             height: 250,
-    //             gravity: 'face',
-    //             crop: fill
-    //         });
-    //         if(result){
-    //             user.avatar.public_id = result.public_id;
-    //             user.avatar.secure_url = result.secure_url;
+    // Run only if user sends a file
 
-    //             //remove file from server
-    //             Fs.rm(`uploads/${req.file.filename}`)
+    console.log("files details > ", JSON.stringify(req.file));
 
-    //         }
-    //     } catch (error) {
+    if (req.file) {
+    
+        try {
+            const result = await cloudinary.v2.uploader.upload(req.file.path, {
+              folder: "lms",
+              width: 250,
+              height: 250,
+              gravity: "faces",
+              crop: "fill",
+            });
 
-    //         return next(
-    //             new AppError(error || 'file not uploaded',500)
-    //         )
-            
-    //     }
-    // }
+        console.log("Upload Result:", result);
+  
+        // If success
+        if (result) {
+          // Set the public_id and secure_url in DB
+          user.avatar.public_id = result.public_id;
+          user.avatar.secure_url = result.secure_url;
+  
+          // After successful upload remove the file from local storage
+          fs.rm(`uploads/${req.file.filename}`);
+        }
+      } catch (error) {
+        return next(
+          new AppError(error || 'File not uploaded, please try again', 400)
+        );
+      }
+    }
 
 
 
@@ -292,8 +302,9 @@ const changePassword = async(req,res, next) =>{
 
 const updateUser = async (req,res,next) =>{ 
 
-        const { fullName } = req.body;
-        const { id } = req.params;
+        // Destructuring the necessary data from the req object
+        const {fullName} = req.body;
+        const {id} = req.user.id;
     
         const user = await User.findById(id);
     
@@ -301,8 +312,39 @@ const updateUser = async (req,res,next) =>{
             return next(new AppError('Invalid user id or User Not found'))
         }
     
-        if(fullName){
+        if(req.fullName){
             user.fullName = fullName
+        }
+
+        if(req.file){
+              await cloudinary.v2.uploader.destroy(user.avatar.public_id);
+
+        try {
+                const result = await cloudinary.v2.uploader.upload(req.file.path, {
+                  folder: "lms",
+                  width: 250,
+                  height: 250,
+                  gravity: "faces",
+                  crop: "fill",
+                });
+    
+                   console.log("Upload Result:", result);
+      
+                 // If success
+                 if (result) {
+                  // Set the public_id and secure_url in DB
+                   user.avatar.public_id = result.public_id;
+                    user.avatar.secure_url = result.secure_url;
+      
+                    // After successful upload remove the file from local storage
+                    fs.rm(`uploads/${req.file.filename}`);
+                }
+            }     catch (error) {
+                  return next(
+                   new AppError(error || 'File not uploaded, please try again', 400)
+                   );
+            }
+        
         }
 
 
