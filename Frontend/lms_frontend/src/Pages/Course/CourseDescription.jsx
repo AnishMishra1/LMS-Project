@@ -8,6 +8,8 @@ const CourseDescription = () => {
 
     const { state } = useLocation();
 
+    
+
     const Navigate = useNavigate()
 
     const { role, data } = useSelector((state) => state.auth);
@@ -27,7 +29,7 @@ const CourseDescription = () => {
                                 <span>
                                     Total Lectures:{" "}
                                 </span>
-                                {state?.numberOfLectures} 9
+                                {state?.numberOfLectures} 
                             </p>
 
                             <p className='font-semibold'>
@@ -41,7 +43,7 @@ const CourseDescription = () => {
 
                          {
                             role == 'ADMIN' || data?.subscription?.status == 'active'  ? (
-                              <button onClick={() => Navigate("/course/displaylectures", {state: {...state}})} className='bg-yellow-500 text-xl rounded-md font-bold px-5 py-3 w-full hover:bg-yellow-300 transition-all ease-in-out duration-150'>
+                              <button onClick={() => Navigate("/course/displaylecture", {state: {...state}})} className='bg-yellow-500 text-xl rounded-md font-bold px-5 py-3 w-full hover:bg-yellow-300 transition-all ease-in-out duration-150'>
                                 Watch Lectures
                               </button>
                             ):

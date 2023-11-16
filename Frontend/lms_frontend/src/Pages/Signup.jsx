@@ -12,10 +12,13 @@ const Signup = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate();
 
+    const [previewImage, setPreviewImage] = useState("");
+
     const [signupData , setSignupData] = useState({
         fullName: '',
         email:"",
         password: "",
+        avatar:"",
     })
 
     function handleUserInput(e){
@@ -26,29 +29,29 @@ const Signup = () => {
         })
     }
 
-    // function getImage(event){
-    //     event.preventDefault();
+    function getImage(event){
+        event.preventDefault();
        
-    //     //getting the image
-    //     const uploadedImage = event.target.files[0];
+        //getting the image
+        const uploadedImage = event.target.files[0];
         
-    //     if(uploadedImage){
-    //         setSignupData({
-    //             ...signupData, 
-    //             avatar: uploadedImage
-    //         })
-            //  const fileReader = new FileReader()
-            //  fileReader.readAsDataURL(uploadedImage);
-            //  fileReader.addEventListener('load', function (){
-            //     setPreviewImage(this.result);
-            //  })
-    //     }
-    // }
+        if(uploadedImage){
+            setSignupData({
+                ...signupData, 
+                avatar: uploadedImage
+            })
+             const fileReader = new FileReader()
+             fileReader.readAsDataURL(uploadedImage);
+             fileReader.addEventListener('load', function (){
+                setPreviewImage(this.result);
+             })
+        }
+    }
 
      async function  createNewAccount(e){
          e.preventDefault();
 
-        if(!signupData.email || !signupData.password || !signupData.fullName){
+        if(!signupData.email || !signupData.password || !signupData.fullName  || !signupData.avatar){
             toast.error('please fill all the details');
             return;
         }
@@ -66,15 +69,15 @@ const Signup = () => {
         }
 
 
-        // const formData = new formData();
-        // formData.append('fullName', signupData.fullName);
-        // formData.append('password', signupData.password);
-        // formData.append('email', signupData.email);
-        // formData.append('avatar', signupData.avatar);......
+        const formData = new FormData();
+        formData.append('fullName', signupData.fullName);
+        formData.append('password', signupData.password);
+        formData.append('email', signupData.email);
+        formData.append('avatar', signupData.avatar);
 
         //dispatch create account action
 
-        const response = await dispatch(createAccount(signupData))
+        const response = await dispatch(createAccount(formData))
         console.log(response);
 
     
@@ -86,31 +89,34 @@ const Signup = () => {
             fullName: '',
             email:"",
             password: "",
+            avatar:"",
 
         })
 
-        // setPreviewImage("")
+        setPreviewImage("")
     }
 
-    const [previewImage, setPreviewImage] = useState('');
+
   return (
     <HomeLayout>
         <div className='flex overflow-x-auto items-center justify-center  bg-cyan-800 h-[100vh]'>
-        <form noValidate onSubmit={createNewAccount} className='flex flex-col justify-center gap-3  p-10 border rounded-lg text-white '>
+        <form noValidate onSubmit={createNewAccount} 
+        className='flex flex-col justify-center gap-3  p-10 border rounded-lg text-white shadow-[0_0_10px_black] '>
             <h1 className='text-center text-2xl font-bold'>Registration Page</h1>
 
-            {/* <label htmlFor="image_upload" className='cursor-pointer'>
+            <label htmlFor="image_upload" className='cursor-pointer'>
                {previewImage ? 
                 (<img className='w-24 h-24 rounded-full m-auto' />)
                 :( <BsPersonCircle className='w-24 h-24 rounded-full m-auto' />)               }
             </label>
             <input 
-            // onChange={getImage()}
+            onChange={getImage}
             type="file"
-            className='hidden'
-            id='image_upload'
+            className=''
+            id='image_uploads'
+            name='image_uploads'
             accept='.jpg,.png,.jpeg,.svg' 
-            /> */}
+            />
             <div className='flex flex-col gap-1'>
                <label htmlFor="fullname" className='font-semibold'>
                 Name

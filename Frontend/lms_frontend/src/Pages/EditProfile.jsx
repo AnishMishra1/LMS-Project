@@ -15,9 +15,27 @@ const EditProfile = () => {
 
     const [data, setData] = useState({
         fullName: '',
-        userId: useSelector((state) => state?.auth?.data?._id)
+        userId: useSelector((state) => state?.auth?.data?._id),
+        previewImage: "",
+        avatar: undefined,
 
     });
+
+    function handleImageUpload(e) {
+        e.preventDefault();
+        const uploadedImage = e.target.files[0];
+        if(uploadedImage) {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(uploadedImage);
+            fileReader.addEventListener("load", function () {
+                setData({
+                    ...data,
+                    previewImage: this.result,
+                    avatar: uploadedImage
+                })
+            })
+        }
+    }
 
     function handleInputChange(e) {
        
@@ -40,7 +58,13 @@ const EditProfile = () => {
             toast.error('Minimum 5 charater require')
         }
 
-        await dispatch(updateProfile([data.userId, data]))
+        const formData = new FormData();
+        formData.append("fullName", data.fullName);
+        formData.append("avatar", data.avatar);
+        console.log(formData.entries().next())
+        console.log(formData.entries().next())
+
+        await dispatch(updateProfile([data.userId, formData]))
 
         await dispatch(getUserData());
 
@@ -57,7 +81,7 @@ const EditProfile = () => {
                     className="flex flex-col justify-center gap-5 rounded-lg p-4 text-white w-80 min-h-[26rem] shadow-[0_0_10px_black]"
                 >
                     <h1 className="text-center text-2xl font-semibold">Edit profile</h1>
-                    {/* <label className="cursor-pointer" htmlFor="image_uploads">
+                    <label className="cursor-pointer" htmlFor="image_uploads">
                         {data.previewImage ? (
                             <img 
                                 className="w-28 h-28 rounded-full m-auto"
@@ -70,13 +94,13 @@ const EditProfile = () => {
                     </label>
                     <input 
                         onChange={handleImageUpload}
-                        className="hidden"
+                        className=""
                         type="file"
                         id="image_uploads"
                         name="image_uploads"
                         accept=".jpg, .png, .svg, .jpeg"
 
-                    /> */}
+                    />
                     <div className="flex flex-col gap-1">
                         <label htmlFor="fullName" className="text-lg font-semibold">Full Name</label>
                         <input 

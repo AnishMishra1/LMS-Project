@@ -7,7 +7,9 @@ const router = Router();
 
 router.route('/')
               .get(isLoggedIn, getAllCourses)
-              .post(isLoggedIn,authorizedRoles,upload.single("thumbnail") ,createCourse);
+              .post(isLoggedIn,authorizedRoles,upload.single("thumbnail") ,createCourse)
+              .delete(isLoggedIn,authorizedRoles,removeLectureFromCourse)
+              
 //Alternate method
 // router.route('/').get(getAllCourses)
 
@@ -17,7 +19,7 @@ router.route('/:id')
              .delete(isLoggedIn,authorizedRoles,deleteCourse)
              .post(isLoggedIn ,authorizedRoles,upload.single("lecture"), addLectureToCourseById);
              
-router.route('/courseId/lectures/:lectureId').delete(isLoggedIn,authorizedRoles,removeLectureFromCourse)
+// router.route('/').delete(isLoggedIn,authorizedRoles,removeLectureFromCourse)
 
 // router.post('/create', createCourse)
 

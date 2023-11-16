@@ -19,9 +19,28 @@ const CreateCouse = () => {
     description: '',
     category: '',
     createdBy: "",
+    thumbnail: null,
+    previewImage: ""
     
 
   })
+
+  
+  function handleImageUpload(e) {
+    e.preventDefault();
+    const uploadedImage = e.target.files[0];
+    if(uploadedImage) {
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(uploadedImage);
+        fileReader.addEventListener("load", function () {
+            setUserInput({
+                ...userInput,
+                previewImage: this.result,
+                thumbnail: uploadedImage
+            })
+        })
+    }
+}
 
   function handleUserInput(e){
      const {name , value} = e.target;
@@ -36,7 +55,7 @@ const CreateCouse = () => {
 
   async function onFormSubmit(e){
     e.preventDefault();
-    if(!userInput.title || !userInput.description || !userInput.category || !userInput.createdBy){
+    if(!userInput.title || !userInput.description || !userInput.category || !userInput.createdBy || !userInput.thumbnail){
       toast.error('All field are mandatory');
       return;
     }
@@ -49,6 +68,8 @@ const CreateCouse = () => {
       description: '',
       category: '',
        createdBy: "",
+       thumbnail: null,
+       previewImage: ""
 
       })
       navigate('/courses')
@@ -76,16 +97,25 @@ const CreateCouse = () => {
              <div className='gap-y-6'>
               <div>
                 <label htmlFor='image_upload' className='cursor-pointer'>
-                  <img src={apj}
-                  className='=w-full h-44 auto border'/>
+                {userInput.previewImage ? (
+                    <img 
+                        className="w-full h-44 m-auto border"
+                        src={userInput.previewImage}
+                    />
+                    ): (
+                     <div className="w-full h-44 m-auto flex items-center justify-center border">
+                         <h1 className="font-bold text-lg">Upload your course thumbnail</h1>
+                     </div>
+                     )}
 
                 </label>
                 <input 
-                className='hidden'
+                className=''
                 type='file'
                 id='image_upload'
                 accept='.jpg, .png, .jpeg, .svg'
                 name='image_upload'
+                onChange={handleImageUpload}
                
                 />
               </div>
@@ -103,6 +133,21 @@ const CreateCouse = () => {
                 value={userInput.title}
                 className='bg-transparent px-2 py-1 border' />
 
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-lg font-semibold" htmlFor="title">
+                   Course title
+                </label>
+                <input
+                  required
+                  type="text"
+                  name="title"
+                  id="title"
+                   placeholder="Enter course title"
+                  className="bg-transparent px-2 py-1 border"
+                  value={userInput.title}
+                  onChange={handleUserInput}
+                 />
               </div>
              </div>
 

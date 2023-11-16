@@ -7,6 +7,9 @@ import HomeLayout from '../../Layouts/HomeLayout'
 const DisplayLecture = () => {
 
     const {state} = useLocation()
+    
+
+  
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const {role} = useSelector((state) => state.auth)
@@ -17,15 +20,15 @@ const DisplayLecture = () => {
     async function onLectureDelete(courseId, lectureId){
         console.log(courseId,lectureId);
         await dispatch(deleteCourseLecture({courseId :courseId, lectureId: lectureId}))
-        await dispatch(getCourseLectures(state._id))
+        await dispatch(getCourseLectures(courseId))
 
     }
 
     useEffect(() => {
-        console.log(state);
+        
         if(!state) navigate("/courses");
         dispatch(getCourseLectures(state._id));
-    })
+    },[])
   return (
     <HomeLayout>
         <div className='w-full flex flex-col gap-10 items-center justify-center min-h-[90vh] py-10 text-wihte  bg-cyan-800'>
