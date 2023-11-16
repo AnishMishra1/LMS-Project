@@ -31,6 +31,10 @@ function AddLecture() {
         })
     }
 
+    console.log(userInput.title);
+    
+    console.log(userInput.description);
+
     function handleVideo(e) {
         const video = e.target.files[0];
         const source = window.URL.createObjectURL(video);
@@ -44,7 +48,7 @@ function AddLecture() {
 
     async function onFormSubmit(e) {
         e.preventDefault();
-        if(!userInput.lecture || !userInput.title || !userInput.description) {
+        if(!userInput.title || !userInput.description || !userInput.lecture ) {
             toast.error("All fields are mandatory")
             return;
         }
@@ -113,12 +117,14 @@ function AddLecture() {
                             </video>
                         ) : (
                             <div className="h-48 border flex items-center justify-center cursor-pointer">
-                                <label className="font-semibold text-cl cursor-pointer" htmlFor="lecture">Choose your video</label>
+                                <label className="font-semibold text-cl cursor-pointer" htmlFor="lecture">
+                                    Choose your video
+                                </label>
                                 <input type="file" className="hidden" id="lecture" name="lecture" onChange={handleVideo} accept="video/mp4 video/x-mp4 video/*" />
                             </div>
                         )}
                         <button type="submit" className="btn btn-primary py-1 font-semibold text-lg">
-                            Add new Lecture
+                            Add New Lecture
                         </button>
                     </form>
                 </div>

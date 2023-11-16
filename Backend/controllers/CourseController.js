@@ -174,12 +174,12 @@ const deleteCourse = async function(req, res, next){
 
 const addLectureToCourseById = async function(req,res,next){
     try {
-      const {title, description } = req.body;
+      const { title , description } = req.body;
   
-      const {id} = req.params;
+      const { id } = req.params;
   
       if (!title || !description) {
-          return next(new AppError("please provide title and descriptioon", 400));
+          return next(new AppError("please provide title and description", 400));
         }
   
       const course = await Course.findById(id);
