@@ -139,7 +139,7 @@ const deleteCourse = async function(req, res, next){
         return next(new AppError("course doent exist",400))
     }
 
-    await course.findByIdAndDelete(id)
+    await course.remove();
 
     res.status(200).json({
         success:true,
@@ -174,13 +174,16 @@ const deleteCourse = async function(req, res, next){
 
 const addLectureToCourseById = async function(req,res,next){
     try {
-      const { title , description } = req.body;
+      const { title, description }   = req.body;
+      
+
+      if (!title || !description) {
+        return next(new AppError("please provide title and description", 400));
+      }
   
       const { id } = req.params;
   
-      if (!title || !description) {
-          return next(new AppError("please provide title and description", 400));
-        }
+      
   
       const course = await Course.findById(id);
   

@@ -16,7 +16,7 @@ function AddLecture() {
     const navigate = useNavigate();
 
     const [userInput, setUserInput] = useState({
-        id: courseDetails._id,
+        id: courseDetails?._id,
         lecture: undefined,
         title: "",
         description: "",
@@ -31,9 +31,7 @@ function AddLecture() {
         })
     }
 
-    console.log(userInput.title);
     
-    console.log(userInput.description);
 
     function handleVideo(e) {
         const video = e.target.files[0];
@@ -52,11 +50,12 @@ function AddLecture() {
             toast.error("All fields are mandatory")
             return;
         }
+        
         const response = await dispatch(addCourseLecture(userInput));
         if(response?.payload?.success) {
             navigate(-1);
             setUserInput({
-                id: courseDetails._id,
+                id: courseDetails?._id,
                 lecture: undefined,
                 title: "",
                 description: "",

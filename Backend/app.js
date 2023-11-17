@@ -7,6 +7,7 @@ import userRoutes from './routes/userRoutes.js';
 import courseRoutes from './routes/courseRouter.js'
 import paymentRoutes from './routes/paymentRoutes.js'
 import errorMiddleware from './middlewares/error.middleware.js';
+import Miscellenous from './routes/Miscellenous.js'
 
 config();
 
@@ -36,6 +37,7 @@ app.use('/ping', function(req,res){
 app.use('/api/v1/user', userRoutes)
 app.use('/api/v1/courses', courseRoutes)
 app.use('/api/v1/payments', paymentRoutes);
+app.use('/api/v1', Miscellenous);
 
 
 

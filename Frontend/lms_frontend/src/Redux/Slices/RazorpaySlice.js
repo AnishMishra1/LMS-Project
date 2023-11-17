@@ -8,7 +8,7 @@ const initialState = {
     isPaymentVerified : false,
     allPayments: '',
     finalMonths: '',
-    monthlySalesRecord: []
+    monthlySalesRecord: [],
 }
 
 
@@ -46,7 +46,7 @@ export const verifyUserPayment = createAsyncThunk("/payments/verify", async (dat
     }
 })
 
-export const getPaymentRecord = createAsyncThunk("/payments/records", async () =>{
+export const getPaymentRecord = createAsyncThunk("/payments/record", async () =>{
     try {
         const response = await axiosInstance.get("/payments/records");
         toast.promise(response, {
@@ -100,6 +100,7 @@ const razorpaySlice = createSlice({
         state.isPaymentVerified = action?.payload?.success
     })
     .addCase(getPaymentRecord.fulfilled, (state,action) => {
+        console.log(action);
         state.allPayments = action?.payload?.payments;
         state.finalMonths = action?.payload?.finalMonths;
         state.monthlySalesRecord= action?.payload?.monthlySalesRecord;
